@@ -16,7 +16,7 @@
 				self = this;
 			this.listEl = $(listEl);
 			this.inputEl = $(inputEl);
-			this.options = $.extend(defaults, options);
+			this.options = $.extend({}, defaults, options);
 			function handler(e) {
 				if( !e.listFilterHandled ) {
 					e.listFilterHandled = true;
