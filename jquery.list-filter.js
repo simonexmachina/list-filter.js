@@ -7,7 +7,7 @@
 	};
 	$.listFilter = {
 		defaults: {
-			itemSelector: 'li',
+			itemSelector: 'li, tbody td',
 			onBefore: null,
 			onAfter: null,
 			hiddenClass: 'hidden'
@@ -33,18 +33,41 @@
 			$(this).bind('after', this.options.onAfter);
 		},
 		filter: function() {
-			var val = this.inputEl.val();
+			var val = this.inputEl.val(),
+				self = this;
 			var items = this.listEl.find(this.options.itemSelector),
 				matched = items.filter(':textContains("' + val + '")'),
 				notMatched = items.filter(':not(:textContains("' + val + '"))');
 			if( !val ) {
-				items.show();
-				return;
+				matched = items;
+				notMatched = $([]);
 			}
 			$(this).trigger('before', matched, notMatched);
-			matched.show().removeClass(this.options.hiddenClass);
-			notMatched.hide().addClass(this.options.hiddenClass);
+			matched.each(function() {
+				self.matched(this);
+			});
+			notMatched.each(function() {
+				self.notMatched(this);
+			});
 			$(this).trigger('after', matched, notMatched);
+		},
+		matched: function(el) {
+			$(el).removeClass(this.options.hiddenClass);
+			if( el.tagName == 'TD' ) {
+				$(el).css('visibility', 'visible');
+			}
+			else {
+				$(el).show();
+			}
+		},
+		notMatched: function(el) {
+			$(el).addClass(this.options.hiddenClass);
+			if( el.tagName == 'TD' ) {
+				$(el).css('visibility', 'hidden');
+			}
+			else {
+				$(el).hide();
+			}
 		}
 	}
 	$.extend($.expr[':'], {
